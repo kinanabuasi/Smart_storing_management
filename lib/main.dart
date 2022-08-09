@@ -31,7 +31,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Smart Storing mangement',
       debugShowCheckedModeBanner: false,
-      home:Homepage(),
+      // home:Homepage(),
+      home:SignIn(),
 
     );
   }

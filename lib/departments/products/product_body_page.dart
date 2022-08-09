@@ -1,6 +1,8 @@
 // ignore_for_file: unused_import, camel_case_types, avoid_unnecessary_containers, prefer_const_constructors, unnecessary_string_escapes, must_be_immutable, prefer_const_literals_to_create_immutables, use_function_type_syntax_for_parameters, non_constant_identifier_names, unnecessary_import, duplicate_import, unnecessary_string_interpolations 
 //import 'dart:ffi';
 
+import 'package:eleven/Api/department_api.dart';
+import 'package:eleven/Api/product_api.dart';
 import 'package:eleven/additions/constants.dart';
 import 'package:eleven/departments/departments_file.dart';
 import 'package:eleven/departments/products/details/details_screen.dart';
@@ -12,10 +14,10 @@ import '../department.dart';
 import 'Product.dart';
 
 class Product_body_page extends StatelessWidget {
-final Product? pro;
+final List<Product> products;
 //final DepCard d;
 final Department dep;
-  const Product_body_page({ Key? key,required this.pro ,required this.dep}) : super(key: key);
+  const Product_body_page({ Key? key,required this.products ,required this.dep}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -162,12 +164,15 @@ class ItemCard extends StatelessWidget {
                 //borderRadius: BorderRadius.circular(16),
              // ),
               
-                 SizedBox(
-                   child: Hero(
-                    tag: "${product.id}",
-                    child: Image.asset(product.image,scale: 2,),
-                    
-                ),
+
+                  Container(
+
+                   decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                     borderRadius: BorderRadius.circular(10)
+                   ),
+                   // height: 100,
+                   child: Image.network(product.imagePath,),
                  ),
               //),
            // ),
@@ -175,7 +180,7 @@ class ItemCard extends StatelessWidget {
           SizedBox(height: 10,width: 10,),
              Text(
               // products is out demo list
-              product.title,
+              product.name,
               style: TextStyle(color: kTextLightColor,
               fontSize: 30,
               fontWeight: FontWeight.bold,
@@ -184,7 +189,7 @@ class ItemCard extends StatelessWidget {
          // ),
          SizedBox(height: 10,width: 10,),
           Text(
-            "\$${product.price}",
+            "\$${product.purchasingPrice}",
             style: TextStyle(fontWeight: FontWeight.bold,
             fontSize: 40,
             ),

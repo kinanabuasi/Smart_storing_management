@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:eleven/Api/product_api.dart';
 import 'package:eleven/additions/constants.dart';
 import 'package:flutter/material.dart';
 import '../../Product.dart';
@@ -19,16 +20,16 @@ class ProductTitleWithImage extends StatelessWidget {
       children: [
        Column( 
           children: <Widget>[
+            // Text(
+            //   "Electronic products",
+            //   style: TextStyle(color: Colors.white),
+            // ),
             Text(
-              "Electronic products",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              product.title,
+              product.name,
               style: Theme.of(context)
                   .textTheme
                   .headline4
-                  ?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+                  ?.copyWith(color: Colors.blue, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: kDefaultPaddin),
             Row(
@@ -38,9 +39,9 @@ class ProductTitleWithImage extends StatelessWidget {
                     children: [
                       TextSpan(text: "Price\n"),
                       TextSpan(
-                        text: "\$${product.price}",
+                        text: "\$${product.selingPrice}",
                         style: Theme.of(context).textTheme.headline4?.copyWith(
-                            color: Colors.white, fontWeight: FontWeight.bold),
+                            color: Colors.black, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -61,14 +62,15 @@ class ProductTitleWithImage extends StatelessWidget {
          children: [
            Hero(
                           tag: "${product.id}",
-                          child: Image.asset(
-                            product.image,
+                          child: Image.network(
+                            product.imagePath,
                             //fit: BoxFit.fill,
                             alignment: Alignment.topRight,
                             //scale: 10,
                           ),
                         ),
 
+           // Text(product.note,style: TextStyle(color: Colors.black,fontSize: 16),)
          ],
        ),
      ),

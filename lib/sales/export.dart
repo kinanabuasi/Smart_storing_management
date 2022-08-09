@@ -1,5 +1,9 @@
 // ignore_for_file: prefer_const_constructors, unused_import, unused_label, non_constant_identifier_names, camel_case_types, prefer_const_literals_to_create_immutables, sized_box_for_whitespace
 import 'package:date_time_picker/date_time_picker.dart';
+import 'package:eleven/Api/api.dart';
+import 'package:eleven/Api/app.dart';
+import 'package:eleven/Api/dealer_api.dart';
+import 'package:eleven/Api/product_api.dart';
 import 'package:eleven/mainly/home_page.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +18,86 @@ class Export extends StatefulWidget {
 }
 
 class _ExportState extends State<Export> {
+
+  List<Dealer>? dealers ;
+  List<Product>? products ;
   String _selectedMenu = '';
+  bool loading = true;
+  int dealer_id =1;
+  int product_id =1;
+  TextEditingController bill = TextEditingController();
+  TextEditingController shipping_charge_price = TextEditingController();
+  int count = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    Api.getAllProduct().then((serverProducts) {
+      Api.getAllDealer().then((serverDealers) {
+        products = serverProducts;
+        dealers = serverDealers;
+        setState((){
+          loading = false;
+        });
+      });
+    });
+  }
+
+  addExport(){
+    if(bill.text.isEmpty){
+      App.Err("Bill Cannot be empty", context);
+      return;
+    }
+    if(bill.text.length>7){
+      App.Err("Bill Cannot be More Than 7", context);
+      return;
+    }
+    if(shipping_charge_price.text.isEmpty){
+      App.Err("shipping price Cannot be empty", context);
+      return;
+    }
+
+    if(int.parse(shipping_charge_price.text) > 256){
+      App.Err("shipping price Cannot be more than 256", context);
+      return;
+    }
+    setState((){
+      loading = true;
+    });
+    Api.addExport(bill.text , shipping_charge_price.text,dealer_id.toString(),product_id.toString(),count.toString()).then((value) {
+      setState((){
+        loading = false;
+      });
+      if(value.succ){
+        App.Succ("Export has been successfully", context);
+
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>  Homepage(),
+            ));
+
+      }else{
+        App.Err(value.msg, context);
+      }
+    });
+  }
+
+
+  increase(){
+    setState((){
+      count++;
+    });
+  }
+
+  decrease(){
+    if(count>1){
+      setState((){
+        count--;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,6 +170,139 @@ class _ExportState extends State<Export> {
         ],
 
 
+      ),
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        child: loading?App.Loading()
+            :Column(
+          children: [
+            SizedBox(height: 50,),
+            _textField(bill, "billing price"),
+            SizedBox(height: 20,),
+            _textField(shipping_charge_price, "shipping price"),
+            SizedBox(height: 20,),
+            Text("Dealer"),
+            DropdownButton(
+
+              // Initial Value
+              value: dealer_id,
+
+              // Down Arrow Icon
+              icon: const Icon(Icons.keyboard_arrow_down),
+
+              // Array list of items
+              items: dealers!.map((items) {
+                return DropdownMenuItem(
+                  value: items.id,
+                  child: Text(items.name),
+                );
+              }).toList(),
+              // After selecting the desired option,it will
+              // change button value to selected value
+              onChanged: (newValue) {
+                setState(() {
+                  dealer_id = int.parse(newValue.toString());
+                });
+              },
+            ),
+
+            SizedBox(height: 20,),
+            Text("Product"),
+            DropdownButton(
+
+              // Initial Value
+              value: product_id,
+
+              // Down Arrow Icon
+              icon: const Icon(Icons.keyboard_arrow_down),
+
+              // Array list of items
+              items: products!.map((items) {
+                return DropdownMenuItem(
+                  value: items.id,
+                  child: Text(items.name),
+                );
+              }).toList(),
+              // After selecting the desired option,it will
+              // change button value to selected value
+              onChanged: (newValue) {
+                setState(() {
+                  product_id = int.parse(newValue.toString());
+                });
+              },
+            ),
+
+            SizedBox(height: 20,),
+            Container(
+              height: 55,
+              width: 80,
+              decoration: BoxDecoration(
+                color: Colors.blue,
+                borderRadius: BorderRadius.circular(25)
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  GestureDetector(
+                      onTap: (){
+                        increase();
+                      },
+                      child: Icon(Icons.add,color: Colors.white,),
+                  ),
+                  Text(count.toString(),style: TextStyle(color: Colors.white,fontSize: 16)),
+                  GestureDetector(
+                    onTap: (){
+                      decrease();
+                    },
+                    child: Icon(Icons.maximize,color: Colors.white,),
+                  ),
+                ],
+              )
+            ),
+
+            SizedBox(height: 20,),
+            GestureDetector(
+              onTap: (){
+                addExport();
+              },
+              child: Container(
+                height: 55,
+                width: 100,
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                child: Center(
+                  child: Text("Submit"),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+
+  _textField(TextEditingController controller,String hint){
+    return Container(
+      height: 55,
+      color: Colors.grey[200],
+      width: MediaQuery.of(context).size.width*0.4,
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              borderSide: BorderSide(color: Colors.transparent),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              borderSide: BorderSide(color: Colors.transparent),
+            ),
+            hintText: hint
+        ),
       ),
     );
   }

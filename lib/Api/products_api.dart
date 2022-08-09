@@ -20,14 +20,14 @@ class _ProductsViewState extends State<ProductsView> {
   void initState() {
     super.initState();
     Api.getAllProduct().then((serverProducts) {
-      //products = serverProducts;
+      products = serverProducts;
       setState((){
         loading = false;
       });
     });
   }
 
-
+  //condition?true:false
   @override
   Widget build(BuildContext context) {
     return Scaffold(

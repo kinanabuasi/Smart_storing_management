@@ -1,6 +1,9 @@
 // ignore_for_file: prefer_const_constructors, unused_label, non_constant_identifier_names, prefer_const_literals_to_create_immutables, camel_case_types, avoid_print, unused_import, use_key_in_widget_constructors, override_on_non_overriding_member
 
 import 'package:date_time_picker/date_time_picker.dart';
+import 'package:eleven/Api/api.dart';
+import 'package:eleven/Api/app.dart';
+import 'package:eleven/Api/import.dart';
 import 'package:eleven/additions/set_time.dart';
 import 'package:eleven/mainly/home_page.dart';
 import 'package:eleven/purchase/Im_card.dart';
@@ -19,6 +22,22 @@ class Import extends StatefulWidget {
 }
 
 class _ImportState extends State<Import> {
+
+
+  List<ImportData> my_imports = <ImportData>[];
+  bool loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    Api.getAllImport().then((serverImport) {
+      my_imports = serverImport;
+      setState((){
+        loading = false;
+      });
+    });
+  }
+
   String _selectedMenu = '';
   @override
   Widget build(BuildContext context) {
@@ -116,12 +135,30 @@ class _ImportState extends State<Import> {
         ],
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          //child: create_vendor_card(context),
-          // child: Container(
-          // color: Colors.white10,
-          // width: 100,
-          //height: 75,
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: loading?App.Loading():GridView.builder(gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4,
+            childAspectRatio: 4/1,
+            mainAxisSpacing: 20,
+            crossAxisSpacing: 20
+          ),
+         itemCount: my_imports.length,
+         itemBuilder: (context,index){
+            return Container(
+              child: Column(
+                children: [
+                  Text("billNumber: "+my_imports[index].billNumber.toString()),
+                  Text("dealerName: "+my_imports[index].dealerName),
+                  Text("billNumber: "+my_imports[index].shippingChargePrice.toString()),
+                  my_imports[index].importProduct.isNotEmpty
+                  ?Text("product: "+my_imports[index].importProduct.first.pruductsName)
+                  :Center()
+                ],
+              ),
+            );
+          }),
         ),
       ),
       //),

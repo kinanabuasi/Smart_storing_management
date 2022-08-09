@@ -1,6 +1,9 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:eleven/Api/api.dart';
+import 'package:eleven/Api/app.dart';
 import 'package:eleven/Api/signin.dart';
+import 'package:eleven/mainly/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -15,8 +18,48 @@ class _SignUpState extends State<SignUp> {
 
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
-  TextEditingController phone = TextEditingController();
-  String dropdownvalue = 'User';
+  TextEditingController name = TextEditingController();
+  String dropdownvalue = 'Customer';
+  bool loading = false;
+
+  signup(){
+
+
+    if(email.text.isEmpty){
+      App.Err("Email Cannot be empty", context);
+      return;
+    }
+    if(password.text.isEmpty){
+      App.Err("Password Cannot be empty", context);
+      return;
+    }
+    if(name.text.isEmpty){
+      App.Err("UserName Cannot be empty", context);
+      return;
+    }
+    setState((){
+      loading = true;
+    });
+    Api.regester(email.text ,name.text, password.text).then((value) {
+      setState((){
+        loading = false;
+      });
+      if(value){
+        App.Succ("SignUp has been successfully", context);
+
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>  Homepage(),
+            ));
+
+      }else{
+        App.Err("Oops Email or UserName is already exist", context);
+      }
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +67,7 @@ class _SignUpState extends State<SignUp> {
         child: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
-          child: Row(
+          child: loading?App.Loading():Row(
             children: [
               Container(
                 width: MediaQuery.of(context).size.width*0.5,
@@ -70,56 +113,23 @@ class _SignUpState extends State<SignUp> {
                     SizedBox(height: 50,),
                     Text("Sign Up For Free",style: TextStyle(fontSize: 20)),
                      SizedBox(height: 20,),
-                    _textField(email,"User_name"),
+                    _textField(name,"User_name"),
 
                     SizedBox(height: 20,),
                     _textField(email,"Email"),
                     SizedBox(height: 20,),
                     _textField(password,"Password"),
                     SizedBox(height: 20,),
-                    _textField(phone,"Phone"),
-                    SizedBox(height: 30,),
-                    _textField(phone,"Zip"),
-                    SizedBox(height: 30,),
-                    _textField(phone,"Country"),
-                    SizedBox(height: 30,),
-                     _textField(phone,"City"),
-                    SizedBox(height: 30,),
-                     _textField(phone,"Phone"),
-                    SizedBox(height: 30,),  
-                     DropdownButton(
+                    // _textField(phone,"Phone"),
+                    // SizedBox(height: 30,),
+                    // _textField(phone,"Zip"),
+                    // SizedBox(height: 30,),
+                    // _textField(phone,"Country"),
+                    // SizedBox(height: 30,),
+                    //  _textField(phone,"City"),
+                    // SizedBox(height: 30,),
+                    //  _textField(phone,"Phone"),
 
-                          // Initial Value
-                          value: dropdownvalue,
-
-                          // Down Arrow Icon
-                          icon: const Icon(Icons.keyboard_arrow_down),
-                          isExpanded: false,
-                          // Array list of items
-                          items: const [
-                            DropdownMenuItem(
-                              onTap: null,
-                              value: "Male",
-                              child: Text("Male"),
-                            ),
-                            DropdownMenuItem(
-                              value: "Female",
-                              child: Text("Female"),
-                            ),
-
-                            DropdownMenuItem(
-                              value: "other",
-                              child: Text("other"),
-                            ),
-                          ],
-                          // After selecting the desired option,it will
-                          // change button value to selected value
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              dropdownvalue = newValue!;
-                            });
-                          },
-                        ),
                                  SizedBox(height: 30,),      
                       Container(
                       width: MediaQuery.of(context).size.width*0.4,
@@ -163,38 +173,30 @@ class _SignUpState extends State<SignUp> {
                       ),
                     ),
                     SizedBox(height: 30,),
-                    GestureDetector(
-                      onTap: (){
-                        //todo signup
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.lightBlue,
+                        //elevation: 5,
+                        padding: const EdgeInsets.symmetric(horizontal: 240,vertical: 25),
+                        shape:RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                       // maximumSize: MaximumSize.max,
+                      ),
+                      onPressed: () {
+                        signup();
                       },
-                      child:
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.lightBlue,
-                            //elevation: 5,
-                            padding: const EdgeInsets.symmetric(horizontal: 240,vertical: 25),
-                            shape:RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                           // maximumSize: MaximumSize.max,
-                          ),
-                          onPressed: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>  const SignIn(),
-                              )),
-                          child: const Text(
-                            "Sign Up",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              fontStyle: FontStyle.normal,
-                            ),
-                          ),
+                      child: const Text(
+                        "Sign Up",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.normal,
                         ),
                       ),
+                    ),
                     SizedBox(height: 30,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

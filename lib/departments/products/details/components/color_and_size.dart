@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, duplicate_ignore
 
+import 'package:eleven/Api/product_api.dart';
 import 'package:eleven/additions/constants.dart';
 import 'package:flutter/material.dart';
 import '../../Product.dart';

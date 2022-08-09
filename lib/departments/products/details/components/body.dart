@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:eleven/Api/product_api.dart';
 import 'package:eleven/additions/constants.dart';
 import 'package:flutter/material.dart';
 import '../../Product.dart';

@@ -12,6 +12,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'department.dart';
 import 'dart:core';
+import 'package:eleven/Api/department_api.dart';
 //import 'package:eleven/Api/product_api.dart';
 
 class departments extends StatefulWidget {
@@ -20,8 +21,26 @@ class departments extends StatefulWidget {
   @override
   State<departments> createState() => _departmentsState();
 }
-Product? pro;
+// Product? pro;
 class _departmentsState extends State<departments> {
+  
+  List<Department> deps = <Department>[];
+  bool loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    Api.getAllDepartment().then((serverData) {
+      //products = serverProducts;
+      deps = serverData;
+      print(deps.length);
+      setState((){
+        loading = false;
+      });
+    });
+  }
+  
+  
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -100,8 +119,16 @@ class _departmentsState extends State<departments> {
          
         ],
       ),
-        body: GridView.builder(
-    itemCount:departments1.length,
+        body: loading
+            ?Container(
+              width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.width,
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+            )
+            :GridView.builder(
+    itemCount:deps.length,
     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
      crossAxisCount: 3,
                   mainAxisSpacing: 1,
@@ -109,19 +136,17 @@ class _departmentsState extends State<departments> {
                  // childAspectRatio: 0.75,
     ), 
    itemBuilder: (context, index) =>
-          DepCard(
-                     dep: departments1[dep!.id],
-                      press: ()
-                      => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Product_body_page(
-                              dep:departments1[f_id],
-                              pro:products[f_id],
-                            ),
-                          ),
-                          ), 
-                    ),
+          Container(
+            height: 55,
+            decoration: BoxDecoration(
+              color: Colors.grey[400],
+              borderRadius: BorderRadius.circular(10)
+            ),
+            child: DepCard(
+                       dep: deps[index]
+
+                      ),
+          ),
   ),
     
   );
@@ -129,57 +154,46 @@ class _departmentsState extends State<departments> {
 }
 class DepCard extends StatelessWidget {
    final Department dep;
-  final VoidCallback press;
   const DepCard({
     Key? key,
     required this.dep,
-    required this.press,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return  GestureDetector(
-      onTap: press,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-         // Expanded(
-             Container(
-              //padding: EdgeInsets.all(5), 
-              // height: 180,
-              // width: 160,
-              decoration: BoxDecoration(
-               // color: product.color,
-                //borderRadius: BorderRadius.circular(16),
-              ),
-              child: Hero(
-                tag: "${dep.id}",
-                child: Image.asset(dep.image ,width: 400,height: 400,),
-                
-              ),
-            ),
-         // ),
-          Padding(
-            padding: const EdgeInsets.symmetric(),
-            child: Text(
-              // products is out demo list
-              dep.title,
-              style: TextStyle(color: Colors.black,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+    return  Center(
+      child: GestureDetector(
+        onTap: (){
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>  Product_body_page(dep: dep,products: dep.products,),
+              ));
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+           // Expanded(
+
+           // ),
+            Padding(
+              padding: const EdgeInsets.symmetric(),
+              child: Text(
+                // products is out demo list
+                dep.name,
+                style: TextStyle(color: Colors.black,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-          Text(
-            "${dep.description}",
-            style: TextStyle(fontWeight: FontWeight.bold,color: Colors.blueGrey[900],
-            fontSize: 20,
-            ),
-          )
-        ],
-      ),
-    
-  );
+
+          ],
+        ),
+
+  ),
+    );
   }
 }
 

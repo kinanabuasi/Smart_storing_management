@@ -1,4 +1,7 @@
+import 'package:eleven/Api/api.dart';
+import 'package:eleven/Api/app.dart';
 import 'package:eleven/Api/signup.dart';
+import 'package:eleven/mainly/home_page.dart';
 import 'package:flutter/material.dart';
 
 class SignIn extends StatefulWidget {
@@ -13,6 +16,46 @@ class _SignInState extends State<SignIn> {
   TextEditingController password = TextEditingController();
   TextEditingController phone = TextEditingController();
   String dropdownvalue = 'User';
+  bool loading = false;
+  _SignInState(){
+    email.text = "manager@admin.com";
+    password.text = "123123";
+  }
+
+  login(){
+
+
+      if(email.text.isEmpty){
+        App.Err("Email Cannot be empty", context);
+        return;
+      }
+    if(password.text.isEmpty){
+      App.Err("Password Cannot be empty", context);
+      return;
+    }
+      setState((){
+        loading = true;
+      });
+      Api.login(email.text , password.text).then((value) {
+        setState((){
+          loading = false;
+        });
+        if(value){
+          App.Succ("LogIn has been successfully", context);
+
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>  Homepage(),
+              ));
+
+        }else{
+          App.Err("Oops wrong Email or password", context);
+        }
+      });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +63,7 @@ class _SignInState extends State<SignIn> {
         child: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
-          child: Row(
+          child:loading?App.Loading(): Row(
             children: [
               Container(
                 width: MediaQuery.of(context).size.width*0.5,
@@ -87,11 +130,9 @@ class _SignInState extends State<SignIn> {
                           ),
                           // maximumSize: MaximumSize.max,
                         ),
-                        onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>  const SignIn(),
-                            )),
+                        onPressed: (){
+                          login();
+                        },
                         child: const Text(
                           "Sign in",
                           textAlign: TextAlign.center,

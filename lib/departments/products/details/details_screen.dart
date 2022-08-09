@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, unused_import
 
+import 'package:eleven/Api/product_api.dart';
 import 'package:eleven/additions/constants.dart';
 import 'package:eleven/departments/products/product_body_page.dart';
 import 'package:eleven/departments/products/Product.dart';
@@ -16,7 +17,7 @@ class DetailsScreen extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       // each product have a color
-      backgroundColor: product.color,
+      // backgroundColor: product.color,
       appBar: buildAppBar(context),
       body:Body (product2: product),
     );
@@ -24,7 +25,7 @@ class DetailsScreen extends StatelessWidget {
 
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
-      backgroundColor: product.color,
+      // backgroundColor: product.color,
       elevation: 0,
       leading: BackButton
       (

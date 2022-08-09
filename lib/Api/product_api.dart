@@ -63,7 +63,7 @@ class Product {
   factory Product.fromMap(Map<String, dynamic> json) => Product(
     id: json["id"],
     name: json["name"],
-    departmentName: json["department_name"],
+    departmentName: json["department_name"]==null?"":json["department_name"],
     departmentId: json["department_id"],
     imagePath: json["image_path"],
     productCode: json["product_code"],

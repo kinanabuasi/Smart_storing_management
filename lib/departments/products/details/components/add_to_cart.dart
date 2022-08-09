@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:eleven/Api/product_api.dart';
 import 'package:eleven/additions/constants.dart';
 import 'package:flutter/material.dart';
 import '../../Product.dart';
@@ -29,7 +30,7 @@ class AddToCart extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(18),
               border: Border.all(
-                color: product.color,
+                // color: product.color,
               ),
             ),
             child:   IconButton(
@@ -44,7 +45,7 @@ class AddToCart extends StatelessWidget {
               child: FlatButton(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18)),
-                color: product.color,
+                // color: product.color,
                 onPressed: () {},
                 child: Text(
                   "Buy  Now".toUpperCase(),
